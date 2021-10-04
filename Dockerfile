@@ -6,14 +6,12 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Run tests to validate app
-FROM node:12-alpine AS app-base
+FROM node:12-alpine
 RUN apk add --no-cache python g++ make
 WORKDIR /app
-COPY app/package.json app/yarn.lock ./
-RUN yarn install
-COPY app/spec ./spec
-COPY app/src ./src
-RUN yarn test
+COPY . .
+RUN yarn install --production
+CMD ["node", "src/index.js"]
 
 # Clear out the node_modules and create the zip
 FROM app-base AS app-zip-creator
